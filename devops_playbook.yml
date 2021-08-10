@@ -1,0 +1,42 @@
+---
+- 
+  hosts: localhost
+  become: true
+  tasks:
+    - name: "Install git on server"
+      yum: "name=git state=present update_cache=yes" ### Install
+      #yum: "name=git state=absent update_cache=yes" ### Remove
+
+ 
+
+    - name: "Download jenkins.repo"
+      get_url:
+        url: http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
+        dest: /etc/yum.repos.d/jenkins.repo
+
+ 
+
+    - name: "Import jenkins key"
+      rpm_key:
+        state: present
+        key: https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+
+ 
+
+    - name: "Install openjdk"
+      yum: "name=java-1.8.0-openjdk state=present"
+
+ 
+
+    - name: "Install Jenkins on server"
+      yum: "name=jenkins state=present"
+
+ 
+
+    - name: "Start jenkins service"
+      systemd: "name=jenkins state=started"
+
+ 
+
+    - name: enable jenkins
+      systemd: "name=jenkins enabled=true"
